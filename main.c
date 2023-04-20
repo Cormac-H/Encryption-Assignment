@@ -4,7 +4,7 @@
  * Alex Sitkowski: 
  * Cormac Hegarty: 13562121
  * Praket Kumar: 13798677
- * Thomas Boardman: 
+ * Thomas Boardman: 24820122
  * Date of submission: 21/05/2023
  * 
 *******************************************************************************/
@@ -12,42 +12,26 @@
 /*******************************************************************************
  * List header files
 *******************************************************************************/
-#include <stdlib.h> /* required for malloc */
-#include <stdio.h> /* required for scanf/fscanf & printf/fprintf*/
-                  /* also used for fopen/fclose, feof, rewind, ftell, fseek */
-#include <string.h> /* required for strcpy & strlen */
-
-/*******************************************************************************
- * Pre-processing Directives
-*******************************************************************************/
-#define MAX_COMPANY_SIZE 5
-#define MAX_NAME_SIZE 11
-/*******************************************************************************
- * Structs
-*******************************************************************************/
-
-
-/*******************************************************************************
- * Function prototypes 
-*******************************************************************************/
-/* Functions used directly by main menu */
-void printMenu(void);
-
+#include "encrypt.h"
 
 /*******************************************************************************
  * Main
 *******************************************************************************/
 int main(void)
 {
-    printf("test");
+    long publicKey[2], privateKey;
+    generateKeys(50, publicKey, &privateKey);
+    
+    printf("Public: %ld %ld, Private: %ld\n", publicKey[0], publicKey[1], privateKey);
+    
+    const char fileName[MAX_FILENAME_SIZE] = "test_file.txt";
+    encryptFile(fileName, publicKey); 
+    
+    const char encryptedFileName[MAX_FILENAME_SIZE] = "e-test_file.txt";
+
+    decryptFile(encryptedFileName, publicKey, privateKey);
+
     return 0;
 }
-/*******************************************************************************
- * This function 
- * 
- * inputs:
- * - none
- * outputs:
- * - none
-*******************************************************************************/
+
 
