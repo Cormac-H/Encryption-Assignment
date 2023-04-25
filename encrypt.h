@@ -39,7 +39,8 @@ void generateKeys(int seed, long* publicKey, long* privateKey);
 void encryptFile(const char fileName[], long* publicKey);
 void decryptFile(const char encryptedFileName[], long* publicKey, long privateKey);
 
-int generateLargePrime(int* seed);
+/* Functions to for the Euclidean math behind the RSA encryption */
+long generateLargePrime(int* seed);
 long modularInverse(const long x, const long y);
 long modularExponentation(long base, long exponent, long modulo);
 

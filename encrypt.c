@@ -4,7 +4,17 @@
 *******************************************************************************/
 #include "encrypt.h"
 
-int generateLargePrime(int* seed)
+/*******************************************************************************
+ * This function generates a large prime number from a pre-selected randomly
+ * generated list of 50
+ *
+ * inputs:
+ * - pointer to a seed variable
+ * outputs:
+ * - prime number generated
+ * author: Cormac
+*******************************************************************************/
+long generateLargePrime(int* seed)
 {
     srand(*seed);
     /* Randomly select a prime number based on the given seed*/
@@ -14,10 +24,25 @@ int generateLargePrime(int* seed)
     return temp;
 }
 
+/*******************************************************************************
+ * This function calculates the modular inverse of 2 numbers using Bezout's 
+ * identity derived from the extended Euclidean algorithm. This repeatedly 
+ * divides the large primes by each other, keeping only the remainders
+ * until the greatest common divisor is found. The coefficients maintained
+ * from this process can then be used to find the modular inverse of the 2
+ * inputs.
+ *
+ * inputs:
+ * - One value
+ * - The second value for the equation
+ * outputs:
+ * - The modular inverse of the 2 input values
+ * author: Cormac
+*******************************************************************************/
 long modularInverse(const long x, const long y)
 {
-    long prevRemainder = x, remainder = y, prevBezoutCoefficient = 1, bezoutCoefficient = 0;
-    long quotient, temp;
+    long prevRemainder = x, remainder = y, prevBezoutCoefficient = 1, 
+         bezoutCoefficient = 0, quotient, temp;
 
     while(remainder != 0)
     {
@@ -41,6 +66,19 @@ long modularInverse(const long x, const long y)
     return (prevBezoutCoefficient % y + y) % y;
 }
 
+/*******************************************************************************
+ * This function calculates the modular exponent of a base, exponent and modulo.
+ * This works by continually taking an exponent, calculating the modulo and then
+ * halving the value until the modular exponent is achieved. Thus resulting
+ * in the remainder of the exponentiation.
+ * inputs:
+ * - a base
+ * - an exponent
+ * - the modulo
+ * outputs:
+ * - the modular exponent of the three inputs
+ * author: Cormac
+*******************************************************************************/
 long modularExponentation(long base, long exponent, long modulo)
 {
     long result = 1;
@@ -63,6 +101,22 @@ long modularExponentation(long base, long exponent, long modulo)
     return result;
 }
 
+/*******************************************************************************
+ * This function generates a 2-part public key and a 1-part public key based on
+ * the RSA encryption algorithm. This works by generating 3 random prime numbers
+ * . the first two are multiplied to get one part of the public key. The last 
+ * number is the final part of the public key. The private key is then taken ASCII
+ * the modular inverse of carmichael's totient of the first two prime values, 
+ * and the third prime value.
+ *
+ * inputs:
+ * - a random seed for prime value generation
+ * - storage for a public key
+ * - storage for a private key
+ * outputs:
+ * - none
+ * author: Cormac
+*******************************************************************************/
 void generateKeys(int seed, long* publicKey, long* privateKey)
 {
     /* Generate p, q, and e as co-prime numbers from random seed */
@@ -85,8 +139,20 @@ void generateKeys(int seed, long* publicKey, long* privateKey)
     *privateKey = modularInverse(e, totient);
 }
 
+/*******************************************************************************
+ * This function encrypts a file using the properties of RSA encryption. Given
+ * a public key it encrypts each ASCII value of a txt file and stores it.
+ * Encryption is the modular exponent of the message and the public keys.
+ *
+ * inputs:
+ * - a filename to encrypt
+ * - a 2 part array of a public key
+ * outputs:
+ * - none
+*******************************************************************************/
 void encryptFile(const char fileName[], long* publicKey)
 {
+    /* Create a new file to store the encrypted message */
     char encryptedFileName[MAX_FILENAME_SIZE] = "e-";
     
     strcpy(encryptedFileName + 2, fileName);
@@ -94,6 +160,7 @@ void encryptFile(const char fileName[], long* publicKey)
     FILE *file = fopen(fileName, "r");
     FILE *encryptedFile = fopen(encryptedFileName, "a");
 
+    /* Attempt to open the provided file */
 	if (file == NULL) 
     {
 		printf("\nCannot read file: ");
@@ -124,6 +191,18 @@ void encryptFile(const char fileName[], long* publicKey)
     remove(fileName);
 }
 
+/*******************************************************************************
+ * This function decrypts a file using the properties of RSA encryption. Given
+ * a public and private key it decrypts each ASCII value of a txt file.
+ * Decryption is the modular exponent of the message and the two keys.
+ *
+ * inputs:
+ * - a filename to decrypt
+ * - a 2 part array of a public key
+ * - a private key
+ * outputs:
+ * - none
+*******************************************************************************/
 void decryptFile(const char encryptedFileName[], long* publicKey, long privateKey)
 {
     char fileName[MAX_FILENAME_SIZE];

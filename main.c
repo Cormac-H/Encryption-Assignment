@@ -25,6 +25,7 @@ int main(void)
     printf("Public: %ld %ld, Private: %ld\n", publicKey[0], publicKey[1], privateKey);
     
     const char fileName[MAX_FILENAME_SIZE] = "test_file.txt";
+    
     encryptFile(fileName, publicKey); 
     
     const char encryptedFileName[MAX_FILENAME_SIZE] = "e-test_file.txt";
