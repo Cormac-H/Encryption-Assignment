@@ -13,26 +13,52 @@
  * List header files
 *******************************************************************************/
 #include "encrypt.h"
-
+#include "compress.h"
+#include "menu.h"
 /*******************************************************************************
  * Main
 *******************************************************************************/
 int main(void)
 {
-    long publicKey[2], privateKey;
-    generateKeys(50, publicKey, &privateKey);
-    
-    printf("Public: %ld %ld, Private: %ld\n", publicKey[0], publicKey[1], privateKey);
-    
-    const char fileName[MAX_FILENAME_SIZE] = "test_file.txt";
-    
-    encryptFile(fileName, publicKey); 
-    
-    const char encryptedFileName[MAX_FILENAME_SIZE] = "e-test_file.txt";
+    /* Prompt user to select a function */
+    int userSelection; 
+    printMainMenu();
+    printf("Enter your choice>\n");
+    scanf("%d", &userSelection);
 
-    decryptFile(encryptedFileName, publicKey, privateKey);
+    while(1) /* Loop requires user provided val of 6 to exit */
+    {
+        switch(userSelection)
+        {
+            case 1:
+                encryptionMain();
+                break;
+            case 2:
+                decryptionMain();
+                break;
+            case 3:
+                compressionMain();
+				break;
+            case 4:
+                decompressionMain();
+                break;
+            case 5:
+                break;
+            case 6: 
+                break;
+            case 7: /* Exit program given correct user value */
+                return 0;
+            default:
+                printf("Invalid choice.");
+        }
+        /* Loop over prompting user input */
+        printMainMenu();
+        printf("Enter your choice>\n");
+        scanf("%d", &userSelection);
+    }
 
     return 0;
+
 }
 
 

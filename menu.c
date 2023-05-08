@@ -1,5 +1,4 @@
-
-#include <stdio.h>
+#include "menu.h"
 /*******************************************************************************
  * This function prints the main menu shown to a user for accessing functions
  *
@@ -9,7 +8,7 @@
  * - none
  * author: Cormac
 *******************************************************************************/
-void mainMenu(void) {
+void printMainMenu(void) {
     printf("\n==========Secure Compact Disk==========\n"
     "Please choose a service\n");
 
@@ -17,10 +16,10 @@ void mainMenu(void) {
         "1. File Encryption\n"
         "2. File Decryption\n"
         "3. File Compression\n"
-        "4. File sorting\n"
-        "5. Search for files\n"
-        "6. Exit\n"
-        "Enter your choice> "
+        "4. File Decompression\n"
+        "5. File sorting\n"
+        "6. Search for files\n"
+        "7. Exit\n"
     );
 }
 
@@ -33,9 +32,13 @@ void mainMenu(void) {
  * - none
  * author: Cormac
 *******************************************************************************/
-void encryptionMenu(void)
+void printEncryptionMenu(void)
 {
-
+    printf("\n==========RSA Encryption==========\n");
+    printf(
+        "1. Enter File Name to Encrypt/Decrypt\n"
+        "2. Go Back\n"
+    );
 }
 
 /*******************************************************************************
@@ -47,9 +50,13 @@ void encryptionMenu(void)
  * - none
  * author: Cormac
 *******************************************************************************/
-void compressionMenu(void)
+void printCompressionMenu(void)
 {
-
+    printf("\n==========File Compression==========\n");
+    printf(
+        "1. Enter File Name to Compress/Decompress\n"
+        "2. Go Back\n"
+    );
 }
 
 /*******************************************************************************
@@ -61,7 +68,7 @@ void compressionMenu(void)
  * - none
  * author: Cormac
 *******************************************************************************/
-void sortMenu(void)
+void printSortMenu(void)
 {
 
 }
@@ -75,7 +82,12 @@ void sortMenu(void)
  * - none
  * author: Cormac
 *******************************************************************************/
-void searchMenu(void)
+void printSearchMenu(void)
 {
 
+}
+
+void clearInputBuffer(void)
+{
+    while(getchar() != '\n');
 }

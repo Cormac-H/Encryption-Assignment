@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "menu.h"
 /*******************************************************************************
  * Pre-processing Directives
 *******************************************************************************/
@@ -31,13 +32,16 @@ static const int primeLookup[PRIMES] =
 /*******************************************************************************
  * Function prototypes 
 *******************************************************************************/
+/* Functions for main user interaction */
+void encryptionMain();
+void decryptionMain();
 
 /* Setup an RSA key for a user*/
 void generateKeys(int seed, long* publicKey, long* privateKey);
 
 /* Functions to encrypt/decrypt provided user has a valid RSA key */
-void encryptFile(const char fileName[], long* publicKey);
-void decryptFile(const char encryptedFileName[], long* publicKey, long privateKey);
+void encryptFile(char fileName[], long* publicKey);
+void decryptFile(char encryptedFileName[], long* publicKey, long privateKey);
 
 /* Functions to for the Euclidean math behind the RSA encryption */
 long generateLargePrime(int* seed);

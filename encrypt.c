@@ -4,6 +4,84 @@
 *******************************************************************************/
 #include "encrypt.h"
 
+void encryptionMain()
+{
+    long publicKey[2], privateKey;
+    generateKeys(50, publicKey, &privateKey);
+
+    printf("Your public keys for this session are %ld and %ld\n", 
+        publicKey[0], 
+        publicKey[1]);
+    printf("Your private key is %ld", privateKey);
+
+    int userSelection = 0;
+
+    printEncryptionMenu();
+    printf("What would you like to do?\n");
+    scanf("%d", &userSelection);
+
+    while(1) /* Loop requires user provided val of 6 to exit */
+    {
+        switch(userSelection)
+        {
+            case 1:
+                printf("Please enter encryption target filename>");
+                char fileName[MAX_FILENAME_SIZE];
+                scanf("%s", fileName);
+                encryptFile(fileName, publicKey);
+                break;
+            case 2:
+                return;
+            default:
+                printf("Invalid choice.");
+                break;
+        }
+        /* Loop over prompting user input */
+        printEncryptionMenu();
+        printf("What would you like to do?\n");
+        scanf("%d", &userSelection);
+    }
+}
+
+void decryptionMain()
+{
+    long publicKey[2], privateKey;
+
+    int userSelection = 0;
+
+    printEncryptionMenu();
+    printf("What would you like to do?\n");
+    scanf("%d", &userSelection);
+
+    while(1) /* Loop requires user provided val of 6 to exit */
+    {
+        switch(userSelection)
+        {
+            case 1:
+                printf("Please enter the first part of your public key>");
+                scanf("%ld", &publicKey[0]);
+                printf("Please enter the second part of your public key>");
+                scanf("%ld", &publicKey[1]);
+                printf("Please enter your private key>");
+                scanf("%ld", &privateKey);
+                printf("Please enter decryption target filename>");
+                char fileName[MAX_FILENAME_SIZE];
+                scanf("%s", fileName);
+                decryptFile(fileName, publicKey, privateKey);
+                break;
+            case 2:
+                return;
+            default:
+                printf("Invalid choice.");
+                break;
+        }
+        /* Loop over prompting user input */
+        printEncryptionMenu();
+        printf("What would you like to do?\n");
+        scanf("%d", &userSelection);
+    }   
+}
+
 /*******************************************************************************
  * This function generates a large prime number from a pre-selected randomly
  * generated list of 50
@@ -150,7 +228,7 @@ void generateKeys(int seed, long* publicKey, long* privateKey)
  * outputs:
  * - none
 *******************************************************************************/
-void encryptFile(const char fileName[], long* publicKey)
+void encryptFile(char fileName[], long* publicKey)
 {
     /* Create a new file to store the encrypted message */
     char encryptedFileName[MAX_FILENAME_SIZE] = "e-";
@@ -158,7 +236,6 @@ void encryptFile(const char fileName[], long* publicKey)
     strcpy(encryptedFileName + 2, fileName);
     
     FILE *file = fopen(fileName, "r");
-    FILE *encryptedFile = fopen(encryptedFileName, "a");
 
     /* Attempt to open the provided file */
 	if (file == NULL) 
@@ -172,6 +249,7 @@ void encryptFile(const char fileName[], long* publicKey)
         printf("\n");
 		return;
 	}
+    FILE *encryptedFile = fopen(encryptedFileName, "a");
 
     char currentChar;
     int message;
@@ -187,8 +265,6 @@ void encryptFile(const char fileName[], long* publicKey)
     /* Close file for safety & security */
     fclose(file);
     fclose(encryptedFile);
-
-    remove(fileName);
 }
 
 /*******************************************************************************
@@ -203,7 +279,7 @@ void encryptFile(const char fileName[], long* publicKey)
  * outputs:
  * - none
 *******************************************************************************/
-void decryptFile(const char encryptedFileName[], long* publicKey, long privateKey)
+void decryptFile(char encryptedFileName[], long* publicKey, long privateKey)
 {
     char fileName[MAX_FILENAME_SIZE];
     
@@ -237,8 +313,6 @@ void decryptFile(const char encryptedFileName[], long* publicKey, long privateKe
     /* Close file for safety & security */
     fclose(file);
     fclose(encryptedFile);
-
-    remove(encryptedFileName);
 }
 
 
