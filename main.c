@@ -15,6 +15,7 @@
 #include "encrypt.h"
 #include "compress.h"
 #include "menu.h"
+#include "sort.h"
 /*******************************************************************************
  * Main
 *******************************************************************************/
@@ -43,6 +44,7 @@ int main(void)
                 decompressionMain();
                 break;
             case 5:
+                printSortMenu();
                 break;
             case 6: 
                 break;
