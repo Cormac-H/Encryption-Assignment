@@ -18,8 +18,8 @@ void printMainMenu(void) {
         "2. File Decryption\n"
         "3. File Compression\n"
         "4. File Decompression\n"
-        "5. File sorting\n"
-        "6. Search for files\n"
+        "5. File Sorting\n"
+        "6. Search Files\n"
         "7. Exit\n"
     );
 }
@@ -35,10 +35,12 @@ void printMainMenu(void) {
 *******************************************************************************/
 void printEncryptionMenu(void)
 {
-    printf("\n==========RSA Encryption==========\n");
+    printf("\n==========RSA Encryption/Decryption==========\n");
     printf(
-        "1. Enter File Name to Encrypt/Decrypt\n"
-        "2. Go Back\n"
+        "1. Enter File Name\n"
+        "2. Display Current Keys\n"
+        "3. Set New Keys\n"
+        "4. Go Back\n"
     );
 }
 
@@ -53,7 +55,7 @@ void printEncryptionMenu(void)
 *******************************************************************************/
 void printCompressionMenu(void)
 {
-    printf("\n==========File Compression==========\n");
+    printf("\n==========Huffman Compression/Decompression==========\n");
     printf(
         "1. Enter File Name to Compress/Decompress\n"
         "2. Go Back\n"

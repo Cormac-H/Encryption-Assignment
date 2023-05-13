@@ -4,33 +4,62 @@
 *******************************************************************************/
 #include "encrypt.h"
 
+/*******************************************************************************
+ * This function initiates file encryption of a file provided by the user. 
+ * This function also provides a user with public and private keys for the 
+ * session should they need to decrypt.
+ *
+ * inputs:
+ * - none
+ * outputs:
+ * - none
+ * author: Cormac
+*******************************************************************************/
 void encryptionMain()
 {
+    /* longs to represent a 2-part public key and a private key for RSA */
     long publicKey[2], privateKey;
+
+    /* Generate public and private keys from randomly selected prime values */
     generateKeys(50, publicKey, &privateKey);
 
+    /* Provide the keys to the user so they can decrypt any encrypted files */
     printf("Your public keys for this session are %ld and %ld\n", 
         publicKey[0], 
         publicKey[1]);
     printf("Your private key is %ld", privateKey);
 
     int userSelection = 0;
-
     printEncryptionMenu();
-    printf("What would you like to do?\n");
+    printf("Enter your choice for encryption>");
     scanf("%d", &userSelection);
+    clearInputBuffer();
 
-    while(1) /* Loop requires user provided val of 6 to exit */
+    while(1) /* Loop requires user provided val of 2 to exit */
     {
         switch(userSelection)
         {
-            case 1:
-                printf("Please enter encryption target filename>");
+            case 1: /* Encrypt the file */
+                printf("Please enter name of file to encrypt>");
                 char fileName[MAX_FILENAME_SIZE];
                 scanf("%s", fileName);
+                /* Only the public key is required for encryption */
                 encryptFile(fileName, publicKey);
                 break;
             case 2:
+                printf("Your public keys for this session are %ld and %ld\n", 
+                    publicKey[0], 
+                    publicKey[1]);
+                printf("Your private key is %ld", privateKey);
+                break;
+            case 3:
+                printf("Please enter a seed 1-50 for key generation");
+                printf(" (Default of 50 is used)>");
+                int seed = 0;
+                scanf("%d", &seed);
+                generateKeys(seed, publicKey, &privateKey);
+                break;
+            case 4:
                 return;
             default:
                 printf("Invalid choice.");
@@ -38,38 +67,72 @@ void encryptionMain()
         }
         /* Loop over prompting user input */
         printEncryptionMenu();
-        printf("What would you like to do?\n");
+        printf("Enter your choice for encryption>");
         scanf("%d", &userSelection);
     }
 }
 
+/*******************************************************************************
+ * This function initiates file decryption based on user provided keys and an  
+ * encrypted file.
+ *
+ * inputs:
+ * - none
+ * outputs:
+ * - none
+ * author: Cormac
+*******************************************************************************/
 void decryptionMain()
 {
+    /* longs to represent a 2-part public key and a private key for RSA */
     long publicKey[2], privateKey;
 
     int userSelection = 0;
 
-    printEncryptionMenu();
-    printf("What would you like to do?\n");
-    scanf("%d", &userSelection);
+    /* Generate keys for display */ 
+    generateKeys(50, publicKey, &privateKey);
 
-    while(1) /* Loop requires user provided val of 6 to exit */
+    printEncryptionMenu();
+    printf("Enter your choice for decryption>");
+    scanf("%d", &userSelection);
+    clearInputBuffer();
+
+    while(1) /* Loop requires user provided val of 2 to exit */
     {
         switch(userSelection)
         {
             case 1:
-                printf("Please enter the first part of your public key>");
-                scanf("%ld", &publicKey[0]);
-                printf("Please enter the second part of your public key>");
-                scanf("%ld", &publicKey[1]);
-                printf("Please enter your private key>");
-                scanf("%ld", &privateKey);
-                printf("Please enter decryption target filename>");
+                /* RSA decryption requires a full public key + private key */
+                printf("Please enter name of encrypted file to decrypt>");
                 char fileName[MAX_FILENAME_SIZE];
                 scanf("%s", fileName);
+
+                printf("Please enter the first part of your public key>");
+                scanf("%ld", &publicKey[0]);
+
+                printf("Please enter the second part of your public key>");
+                scanf("%ld", &publicKey[1]);
+
+                printf("Please enter your private key>");
+                scanf("%ld", &privateKey);
+
+                /* Decrypt using all of the above information */
                 decryptFile(fileName, publicKey, privateKey);
                 break;
             case 2:
+                printf("Your public keys for this session are %ld and %ld\n", 
+                    publicKey[0], 
+                    publicKey[1]);
+                printf("Your private key is %ld", privateKey);
+                break;
+            case 3:
+                printf("Please enter a seed 1-50 for key generation");
+                printf(" (Default of 50 is used)>");
+                int seed = 0;
+                scanf("%d", &seed);
+                generateKeys(seed, publicKey, &privateKey);
+                break;
+            case 4:
                 return;
             default:
                 printf("Invalid choice.");
@@ -77,8 +140,9 @@ void decryptionMain()
         }
         /* Loop over prompting user input */
         printEncryptionMenu();
-        printf("What would you like to do?\n");
+        printf("Enter your choice for decryption>");
         scanf("%d", &userSelection);
+        clearInputBuffer();
     }   
 }
 
@@ -231,24 +295,19 @@ void generateKeys(int seed, long* publicKey, long* privateKey)
 void encryptFile(char fileName[], long* publicKey)
 {
     /* Create a new file to store the encrypted message */
-    char encryptedFileName[MAX_FILENAME_SIZE] = "e-";
+    char encryptedFileName[MAX_FILENAME_SIZE] = "encrypted-";
     
-    strcpy(encryptedFileName + 2, fileName);
+    strcpy(encryptedFileName + 10, fileName);
     
     FILE *file = fopen(fileName, "r");
 
     /* Attempt to open the provided file */
 	if (file == NULL) 
     {
-		printf("\nCannot read file: ");
-        while(*fileName != '\0')
-        {
-            printf("%c", *fileName);
-            fileName++;
-        }
-        printf("\n");
+		printf("\nCannot read file\n");
 		return;
 	}
+
     FILE *encryptedFile = fopen(encryptedFileName, "a");
 
     char currentChar;
@@ -262,6 +321,8 @@ void encryptFile(char fileName[], long* publicKey)
         fprintf(encryptedFile, "%ld ", modularExponentation(message, publicKey[1], publicKey[0]));
         fseek(encryptedFile, 0, SEEK_END);
     }
+
+    printf("\nFile encrypted! See: %s\n", encryptedFileName);
     /* Close file for safety & security */
     fclose(file);
     fclose(encryptedFile);
@@ -281,24 +342,17 @@ void encryptFile(char fileName[], long* publicKey)
 *******************************************************************************/
 void decryptFile(char encryptedFileName[], long* publicKey, long privateKey)
 {
-    char fileName[MAX_FILENAME_SIZE];
+    char decryptedFileName[MAX_FILENAME_SIZE] = "decrypted";
     
-    strcpy(fileName, encryptedFileName + 2);
-    
-    FILE *file = fopen(fileName, "a");
+    strcpy(decryptedFileName + 9, encryptedFileName + 9);
     FILE *encryptedFile = fopen(encryptedFileName, "r");
 
 	if (encryptedFile == NULL) 
     {
-		printf("\nCannot read file: ");
-        while(*encryptedFileName != '\0')
-        {
-            printf("%c", *encryptedFileName);
-            encryptedFileName++;
-        }
-        printf("\n");
+		printf("\nCannot read file \n");
 		return;
 	}
+    FILE *file = fopen(decryptedFileName, "a");
 
     long cipher = 0;
     char c;
@@ -310,6 +364,8 @@ void decryptFile(char encryptedFileName[], long* publicKey, long privateKey)
         fprintf(file, "%c", c);
         fseek(file, 0, SEEK_END);
     }
+    printf("\nFile decrypted! See: %s\n", decryptedFileName);
+
     /* Close file for safety & security */
     fclose(file);
     fclose(encryptedFile);

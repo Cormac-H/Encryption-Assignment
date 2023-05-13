@@ -14,6 +14,7 @@
 *******************************************************************************/
 #include "encrypt.h"
 #include "compress.h"
+
 #include "menu.h"
 #include "sort.h"
 /*******************************************************************************
@@ -24,7 +25,7 @@ int main(void)
     /* Prompt user to select a function */
     int userSelection; 
     printMainMenu();
-    printf("Enter your choice>\n");
+    printf("Enter your choice>");
     scanf("%d", &userSelection);
 
     while(1) /* Loop requires user provided val of 6 to exit */
@@ -55,7 +56,7 @@ int main(void)
         }
         /* Loop over prompting user input */
         printMainMenu();
-        printf("Enter your choice>\n");
+        printf("Enter your choice>");
         scanf("%d", &userSelection);
     }
 
