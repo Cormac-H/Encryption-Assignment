@@ -62,6 +62,7 @@ void compressionMain()
         printCompressionMenu();
         printf("Enter your choice for compression>");
         scanf("%d", &userSelection);
+        clearInputBuffer();
     }
 }
 
@@ -138,6 +139,7 @@ void decompressionMain()
         printCompressionMenu();
         printf("Enter your choice for decompression>");
         scanf("%d", &userSelection);
+        clearInputBuffer();
     }
 }
 

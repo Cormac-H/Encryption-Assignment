@@ -10,16 +10,16 @@ main.o: main.c encrypt.h compress.h menu.h
 encrypt.o: encrypt.c encrypt.h menu.h
 	$(CC) $(CFLAGS) -c -o encrypt.o encrypt.c
 
-compress.o: compress.c compress.h
+compress.o: compress.c compress.h menu.h
 	$(CC) $(CFLAGS) -c -o compress.o compress.c
 
-sort.o: sort.c sort.h
+sort.o: sort.c sort.h menu.h
 	$(CC) $(CFLAGS) -c -o sort.o sort.c
 
-search.o: search.c search.h
+search.o: search.c search.h menu.h
 	$(CC) $(CFLAGS) -c -o search.o search.c
 
 menu.o: menu.c menu.h
 	$(CC) $(CFLAGS) -c -o menu.o menu.c
 clean:
-	rm main.out main.o encrypt.o
+	rm main.out main.o encrypt.o compress.o sort.o search.o

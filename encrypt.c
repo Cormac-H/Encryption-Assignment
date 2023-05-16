@@ -69,6 +69,7 @@ void encryptionMain()
         printEncryptionMenu();
         printf("Enter your choice for encryption>");
         scanf("%d", &userSelection);
+        clearInputBuffer();
     }
 }
 
