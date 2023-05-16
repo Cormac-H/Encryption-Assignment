@@ -5,12 +5,14 @@
  * This function initiates file sorting on a file provided by a user
  *
  * inputs:
- * - none
+ * - a 1 or 0 value indicating whether the program is in default sorting Mode
+ * - this will flag that insertion sort is automatically used
  * outputs:
  * - none
  * author: Thomas Boardman
 *******************************************************************************/
-void sortMain(void) {
+void sortMain(int defaultSortMode) 
+{
     int userSelection;
     char fileName[MAX_FILENAME_SIZE];
 
@@ -21,7 +23,7 @@ void sortMain(void) {
     scanf("%d", &userSelection);
     clearInputBuffer();
 
-    while(1) /* Loop requires user provided val of 2 to exit */
+    while(1) /* Loop requires user provided val of 3 to exit */
     {
         switch(userSelection)
         {
@@ -53,40 +55,49 @@ void sortMain(void) {
                 /* Close the file before reopening the file for the writing */
                 fclose(file); 
 
-                int sortChoice = 0;
-                printf(
-                    "\n == Sort Selection ==\n"
-                    "1. Insertion sort\n"
-                    "2. Bubble sort\n"
-                    "3. Quick sort\n"
-                    "Enter sort type>\n"
-                );
-                scanf("%d", &sortChoice);
-                clearInputBuffer();
-
-                switch(sortChoice) /* Choose a sort based on a user prompt */
+                if(defaultSortMode == 1)
                 {
-                    case 1:
-                        insertionSort(contents, numLines);
-                        printf("File contents have been sorted alphabetically"
-                                " with Insertion Sort\n");
-                        break;
-                    case 2:
-                        bubbleSort(contents, numLines);
-                        printf("File contents have been sorted alphabetically"
-                                " with Bubble Sort\n");
-                        break;
-                    case 3:
-                        quickSort(contents, 0, numLines - 1);
-                        printf("File contents have been sorted alphabetically"
-                                " with Insertion Sort\n");
-                        break;
-                    default:
-                        insertionSort(contents, numLines);
-                        printf("Option not recognized: "
-                            "Insertion Sort has been selected by default\n");
-
+                    insertionSort(contents, numLines);
+                    printf("Insertion Sort has been used by default\n");
                 }
+                else
+                {
+                    int sortChoice = 0;
+                    printf(
+                        "\n == Sort Selection ==\n"
+                        "1. Insertion sort\n"
+                        "2. Bubble sort\n"
+                        "3. Quick sort\n"
+                        "Enter sort type>\n"
+                    );
+                    scanf("%d", &sortChoice);
+                    clearInputBuffer();
+
+                    switch(sortChoice) /* Choose a sort based on a user prompt */
+                    {
+                        case 1:
+                            insertionSort(contents, numLines);
+                            printf("File contents have been sorted alphabetically"
+                                    " with Insertion Sort\n");
+                            break;
+                        case 2:
+                            bubbleSort(contents, numLines);
+                            printf("File contents have been sorted alphabetically"
+                                    " with Bubble Sort\n");
+                            break;
+                        case 3:
+                            quickSort(contents, 0, numLines - 1);
+                            printf("File contents have been sorted alphabetically"
+                                    " with Insertion Sort\n");
+                            break;
+                        default:
+                            insertionSort(contents, numLines);
+                            printf("Option not recognized: "
+                                "Insertion Sort has been selected by default\n");
+
+                    }
+                }
+                
                 /* writes the stored contents from file back into the file */
                 file = fopen(fileName, "w");
                 for (i = 0; i < numLines; i++)
@@ -96,6 +107,100 @@ void sortMain(void) {
                 
                 break;
             case 2:
+                char fileName[MAX_FILENAME_SIZE];
+
+                /* Get the first file name */
+                printf("Enter a file name>");
+                scanf("%s", fileName);
+                clearInputBuffer();
+
+                /* Create a linked list and keep track of the current node */
+                node_t* currentFile = malloc(sizeof(node_t));
+                strcpy(currentFile->fileName, fileName);
+                currentFile->nextFile = NULL;
+
+                /* Track the beginning of the list for iterating */
+                node_t* firstFile = currentFile;
+                
+                int userChoice;
+                printf("1. Enter another file name\n"
+                        "2. Sort listed files\n"
+                        "Please choose>");
+
+                scanf("%d", &userChoice);
+                clearInputBuffer();
+                /* Loop over user input */
+                while(1)
+                {
+                    switch(userChoice)
+                    {
+                        case 1:
+                            char fileName[MAX_FILENAME_SIZE];
+                            /* with case one add a new node to the list */
+                            printf("Enter a file name>");
+                            scanf("%s", fileName);
+                            clearInputBuffer();
+
+                            node_t* newFile = malloc(sizeof(node_t));
+                            strcpy(newFile->fileName, fileName);
+                            newFile->nextFile = NULL;
+
+                            currentFile->nextFile = newFile;
+                            currentFile = newFile;
+                            break;
+                        case 2:
+                            /* Perform an insertion sort on every file*/
+                            while(firstFile != NULL)
+                            {
+                                FILE* file = fopen(firstFile->fileName, "r");
+                                if (file == NULL)
+                                {
+                                    printf("Error opening %s\n", firstFile->fileName);
+                                    firstFile = firstFile->nextFile;
+                                }
+                                else
+                                {
+                                char contents[MAX_STRING_SIZE][MAX_STRING_SIZE];
+
+                                int i = 0;
+
+                                /* Read file contents in array of strings */
+                                char buffer[MAX_STRING_SIZE];
+
+                                while (fgets(buffer, MAX_STRING_SIZE, file)) 
+                                {
+                                    strcpy(contents[i], buffer);
+                                    i++;
+                                }
+                                int numLines = i;
+
+                                insertionSort(contents, numLines);
+
+                                file = fopen(firstFile->fileName, "w");
+
+                                for (i = 0; i < numLines; i++)
+                                    fprintf(file, "%s", contents[i]);
+
+                                fclose(file);
+
+                                firstFile = firstFile->nextFile;
+                                }
+                            }
+                            printf("Attempted to sort all files\n");
+                            return;
+                        default:
+                            printf("Invalid choice.\n");
+                            break;
+                    }
+                printf("1. Enter another file name\n"
+                        "2. Sort listed files\n"
+                        "Please choose>");
+
+                scanf("%d", &userChoice);
+                clearInputBuffer();
+                }
+                break;
+            case 3:
                 return;
             default:
                 printf("Invalid choice.\n");

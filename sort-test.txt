@@ -1,4 +1,6 @@
-
 apple
 banana
 charlie
+dig
+echo
+fox

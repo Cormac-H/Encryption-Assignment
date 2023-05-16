@@ -1,7 +1,7 @@
 /*******************************************************************************
  * 48430 Fundamentals of C Programming - Assignment 3
  * Group Members: Alex Sitkowski, Cormac Hegarty, Praket Kumar, Thomas Boardman
- * Alex Sitkowski: 
+ * Alex Sitkowski: 14277127
  * Cormac Hegarty: 13562121
  * Praket Kumar: 13798677
  * Thomas Boardman: 24820122
@@ -92,10 +92,10 @@ int main(int argc, char *argv[])
         switch(userSelection)
         {
             case 1:
-                encryptionMain();
+                encryptionMain(seed);
                 break;
             case 2:
-                decryptionMain();
+                decryptionMain(seed);
                 break;
             case 3:
                 compressionMain();
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
                 decompressionMain();
                 break;
             case 5:
-                sortMain();
+                sortMain(defaultSortMode);
                 break;
             case 6: 
                 break;

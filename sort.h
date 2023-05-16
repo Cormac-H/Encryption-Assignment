@@ -8,8 +8,14 @@
 #define MAX_FILENAME_SIZE 260
 #define MAX_STRING_SIZE 100
 
+typedef struct node
+{
+    char fileName[MAX_FILENAME_SIZE];
+    struct node* nextFile;
+} node_t;
+
 /* Main user prompts */
-void sortMain(void);
+void sortMain(int defaultSortMode);
 
 /* Main sorting functions */
 void insertionSort(char fileContents[][MAX_STRING_SIZE], 

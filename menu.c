@@ -75,7 +75,8 @@ void printSortMenu(void)
     printf("\n==========File Sorting==========\n");
     printf(
         "1. Enter File Name to sort\n"
-        "2. Go Back\n"
+        "2. Enter Batch of File Names\n"
+        "3. Go Back\n"
     );
 }
 

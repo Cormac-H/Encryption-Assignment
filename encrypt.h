@@ -33,8 +33,8 @@ static const int primeLookup[PRIMES] =
  * Function prototypes 
 *******************************************************************************/
 /* Functions for main user interaction */
-void encryptionMain();
-void decryptionMain();
+void encryptionMain(int seed);
+void decryptionMain(int seed);
 
 /* Setup an RSA key for a user*/
 void generateKeys(int seed, long* publicKey, long* privateKey);

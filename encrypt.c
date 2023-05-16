@@ -10,18 +10,18 @@
  * session should they need to decrypt.
  *
  * inputs:
- * - none
+ * - a seed value to be used for key generation
  * outputs:
  * - none
  * author: Cormac
 *******************************************************************************/
-void encryptionMain()
+void encryptionMain(int seed)
 {
     /* longs to represent a 2-part public key and a private key for RSA */
     long publicKey[2], privateKey;
 
     /* Generate public and private keys from randomly selected prime values */
-    generateKeys(50, publicKey, &privateKey);
+    generateKeys(seed, publicKey, &privateKey);
 
     /* Provide the keys to the user so they can decrypt any encrypted files */
     printf("Your public keys for this session are %ld and %ld\n", 
@@ -43,20 +43,26 @@ void encryptionMain()
                 printf("Please enter name of file to encrypt>");
                 char fileName[MAX_FILENAME_SIZE];
                 scanf("%s", fileName);
+                clearInputBuffer();
                 /* Only the public key is required for encryption */
                 encryptFile(fileName, publicKey);
                 break;
             case 2:
-                printf("Your public keys for this session are %ld and %ld\n", 
+                printf("Your public keys for are currently %ld and %ld\n", 
                     publicKey[0], 
                     publicKey[1]);
-                printf("Your private key is %ld", privateKey);
+                printf("Your private key is currently %ld", privateKey);
                 break;
             case 3:
-                printf("Please enter a seed 1-50 for key generation");
-                printf(" (Default of 50 is used)>");
-                int seed = 0;
-                scanf("%d", &seed);
+                printf("Please enter a seed for key generation>");
+                char term;
+                if(scanf("%d%c", &seed, &term) != 2 || term != '\n' || seed > 999999)
+                {
+                    printf("Invalid seed please ensure a max of 6 digits\n");
+                    clearInputBuffer();
+                    break;
+                }
+                clearInputBuffer();
                 generateKeys(seed, publicKey, &privateKey);
                 break;
             case 4:
@@ -78,12 +84,12 @@ void encryptionMain()
  * encrypted file.
  *
  * inputs:
- * - none
+ * - a seed value to be used for key generation
  * outputs:
  * - none
  * author: Cormac
 *******************************************************************************/
-void decryptionMain()
+void decryptionMain(int seed)
 {
     /* longs to represent a 2-part public key and a private key for RSA */
     long publicKey[2], privateKey;
@@ -91,7 +97,7 @@ void decryptionMain()
     int userSelection = 0;
 
     /* Generate keys for display */ 
-    generateKeys(50, publicKey, &privateKey);
+    generateKeys(seed, publicKey, &privateKey);
 
     printEncryptionMenu();
     printf("Enter your choice for decryption>");
@@ -127,10 +133,15 @@ void decryptionMain()
                 printf("Your private key is %ld", privateKey);
                 break;
             case 3:
-                printf("Please enter a seed 1-50 for key generation");
-                printf(" (Default of 50 is used)>");
-                int seed = 0;
-                scanf("%d", &seed);
+                printf("Please enter a seed for key generation>");
+                char term;
+                if(scanf("%d%c", &seed, &term) != 2 || term != '\n' || seed > 999999)
+                {
+                    printf("Invalid seed please ensure a max of 6 digits\n");
+                    clearInputBuffer();
+                    break;
+                }
+                clearInputBuffer();
                 generateKeys(seed, publicKey, &privateKey);
                 break;
             case 4:
