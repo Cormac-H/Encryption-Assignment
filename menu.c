@@ -87,11 +87,16 @@ void printSortMenu(void)
  * - none
  * outputs:
  * - none
- * author: Cormac
+ * author: Praket Kumar
 *******************************************************************************/
 void printSearchMenu(void)
 {
-
+    printf("\n==========File Searching==========\n");
+    printf(
+        "1. Linear Search\n"
+        "2. Binary Search\n"
+        "3. Go Back\n"
+    );
 }
 
 /*******************************************************************************

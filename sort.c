@@ -31,7 +31,7 @@ void sortMain(int defaultSortMode)
                 printf("Enter file name: ");
                 scanf("%s", fileName);
                 clearInputBuffer();
-
+                
                 FILE* file = fopen(fileName, "r");
                 if (file == NULL) {
                     printf("Error when opening the file\n");

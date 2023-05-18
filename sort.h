@@ -15,7 +15,7 @@ typedef struct node
 } node_t;
 
 /* Main user prompts */
-void sortMain(int defaultSortMode);
+void sortMain(int defaultSortMode); 
 
 /* Main sorting functions */
 void insertionSort(char fileContents[][MAX_STRING_SIZE], 
