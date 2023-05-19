@@ -85,10 +85,10 @@ int main(int argc, char *argv[])
     int userSelection; 
     while(1) /* Loop requires user provided val of 7 to exit */
     {
-    printMainMenu();
-    printf("Enter your choice>");
-    scanf("%d", &userSelection);
-    clearInputBuffer();
+        printMainMenu();
+        printf("Enter your choice>");
+        scanf("%d", &userSelection);
+        clearInputBuffer();
 
         switch(userSelection)
         {
@@ -114,11 +114,8 @@ int main(int argc, char *argv[])
                 return 0;
             default:
                 printf("Invalid choice.");
-        }
-      
+        } 
     }
-
-    
 }
 
 
