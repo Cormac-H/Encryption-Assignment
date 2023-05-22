@@ -1,6 +1,7 @@
 #include "sort.h"
 #include "menu.h"
 
+#define DEBUG
 /*******************************************************************************
  * This function initiates file sorting on a file provided by a user
  *

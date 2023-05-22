@@ -9,15 +9,15 @@
 #define MAX_FILENAME_SIZE 260
 #define CHAR_MAX 127
 
-void compressionMain();
+void compressionMain(const int verbose);
 
-void decompressionMain();
+void decompressionMain(const int verbose);
 
 /*function to compress the input*/
-void compressFile(FILE *input, FILE *output);
+void compressFile(FILE *input, FILE *output, const int verbose);
 
 /*function to decompress the input*/
-void decompressFile (FILE *input, FILE *output);
+void decompressFile (FILE *input, FILE *output, const int verbose);
 
 #endif
 

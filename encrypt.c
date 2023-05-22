@@ -4,6 +4,7 @@
 *******************************************************************************/
 #include "encrypt.h"
 
+/* #define DEBUG */
 /*******************************************************************************
  * This function initiates file encryption of a file provided by the user. 
  * This function also provides a user with public and private keys for the 
@@ -277,6 +278,8 @@ void generateKeys(int seed, long* publicKey, long* privateKey)
     long p = generateLargePrime(&seed);
     long q = generateLargePrime(&seed);
     long e = generateLargePrime(&seed);
+
+    
     /* First portion of RSA public key = p * q */
     publicKey[0] = p * q;
 
@@ -291,6 +294,13 @@ void generateKeys(int seed, long* publicKey, long* privateKey)
 
     /* decryption key given by mod inverse of e & totient*/
     *privateKey = modularInverse(e, totient);
+
+    #ifdef DEBUG
+        printf("== Key generation Debug ==\n");
+        printf("p = %ld\nq = %ld\ne = %ld\n", p, q, e);        
+        printf("Totient of %ld and %ld = %ld\n", p, q, totient);
+        printf("Modular inverse of e & totient = %ld\n", *privateKey);
+    #endif
 }
 
 /*******************************************************************************
@@ -329,8 +339,15 @@ void encryptFile(char fileName[], long* publicKey)
     {
         /* implicitly cast the ASCII to it's decimal val */
         message = currentChar;
+
         /* Message encryption = mod exponent (M ^ e) % n */
-        fprintf(encryptedFile, "%ld ", modularExponentation(message, publicKey[1], publicKey[0]));
+        long temp = modularExponentation(message, publicKey[1], publicKey[0]);
+
+        fprintf(encryptedFile, "%ld ", temp);
+
+        #ifdef DEBUG
+            printf("%c encrypted as %ld\n", message, temp);
+        #endif
         fseek(encryptedFile, 0, SEEK_END);
     }
 
@@ -373,6 +390,9 @@ void decryptFile(char encryptedFileName[], long* publicKey, long privateKey)
     {
         /* Message decryption = mod exponent (C ^ d) % n */
         c = modularExponentation(cipher, privateKey, publicKey[0]);
+        #ifdef DEBUG
+            printf("%ld decrypted as %c\n", cipher, c);
+        #endif
         fprintf(file, "%c", c);
         fseek(file, 0, SEEK_END);
     }

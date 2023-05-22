@@ -1,6 +1,7 @@
 #include "compress.h"
 #include "menu.h"
 
+/* #define DEBUG */
 /*******************************************************************************
  * This function initiates huffman file compression on a file provided by a user
  *
@@ -10,7 +11,7 @@
  * - none
  * author: Cormac
 *******************************************************************************/
-void compressionMain()
+void compressionMain(const int verbose)
 {
     int userSelection;
     printCompressionMenu();
@@ -43,7 +44,7 @@ void compressionMain()
                 FILE *compressedFile = fopen(compressedFileName, "a");
 
                 /* Run the compression algorithm */
-                compressFile(file, compressedFile);
+                compressFile(file, compressedFile, verbose);
 
                 printf("\nFile compressed! See: %s\n", compressedFileName);
 
@@ -77,7 +78,7 @@ void compressionMain()
  * author: Cormac
 *******************************************************************************/
 
-void decompressionMain()
+void decompressionMain(int verbose)
 {
     int userSelection;
 
@@ -110,7 +111,7 @@ void decompressionMain()
                 /* Run decompression algorithm */
                 FILE *decompressedFile = fopen(decompressedFileName, "a+");
 
-                decompressFile(compressedFile, decompressedFile);
+                decompressFile(compressedFile, decompressedFile, verbose);
 
                 /* Check edge case where the buffer is not correctly decoded */
                 fseek(decompressedFile, 0, SEEK_END);
@@ -120,7 +121,7 @@ void decompressionMain()
                 if (0 == size) {
                     rewind(decompressedFile);
                     rewind(compressedFile);
-                    decompressFile(compressedFile, decompressedFile);
+                    decompressFile(compressedFile, decompressedFile, verbose);
                 }
                 /* File has now been decompressed with certainty */
                 printf("\nFile decompressed! See: %s\n", decompressedFileName);
@@ -157,7 +158,7 @@ void decompressionMain()
  * - a filestream to the beginning of an empty output file
  * author: Cormac
 *******************************************************************************/
-void compressFile(FILE *input, FILE *output)
+void compressFile(FILE *input, FILE *output, const int verbose)
 {
     /* Declare a table of fixed encodings used to convert each ascii letter
     *  value 26 is reserved for space, and value 27 is reserved for newline
@@ -176,6 +177,16 @@ void compressFile(FILE *input, FILE *output)
     /* 27 = newline */
     "001010110"
     };
+
+    if(verbose == 1)
+    {
+        printf("Current Encodings are: \n");
+        int i;
+        for(i = 0; i < 26; i++)
+        {
+            printf("%c = %s ", i + 65, letterEncodings[i]);
+        }
+    }
     /* declare a buffer character to convert into bits */
     unsigned char buffer = 0;
     /* declare a variable to keep track of when an entire byte is written */
@@ -204,6 +215,9 @@ void compressFile(FILE *input, FILE *output)
         /* For each 1 or 0 in the encoding, write this as an individual 
         * bit to the output file
         */
+        #ifdef DEBUG
+            printf("\n %c encoded as: ", c);
+        #endif
         for (i = 0; i < strlen(code); i++) 
         {
             if (code[i] == '0') /* Use left-shift bitwise to obtain the 0 bit */
@@ -214,6 +228,12 @@ void compressFile(FILE *input, FILE *output)
             ++bitCount;
             /* At any point even if mid-way through a char, the buffer fills
             * to 8 bits, write this as an individual character to file */
+            
+            /* print buffer to debug */
+            #ifdef DEBUG
+                printf("%c", code[i]);
+            #endif
+
             if (bitCount == 8) 
             {
                 fputc(buffer, output);
@@ -223,14 +243,24 @@ void compressFile(FILE *input, FILE *output)
             }
         }
     }
+
     /* After writing all encodings, pad the remaining byte if < 8 bits */
     if (bitCount > 0) 
     {
+        if(verbose == 1)
+        {
+            printf("\nPadding file!");
+        }
         buffer = buffer << (8 - bitCount);
         fputc(buffer, output);
     }
 
-    printf("Compression Ratio of %.2f%%",((float)newTotalBits/(float)originalTotalBits)*100);
+    if(verbose == 1)
+    {
+        printf("\nCompression Ratio of %.2f%%",
+            ((float)newTotalBits/(float)originalTotalBits)*100);
+    }
+
 }
 
 /*******************************************************************************
@@ -245,7 +275,7 @@ void compressFile(FILE *input, FILE *output)
  * - a filestream to the beginning of an empty output file
  * author: Cormac
 *******************************************************************************/
-void decompressFile (FILE *input, FILE *output)
+void decompressFile (FILE *input, FILE *output, const int verbose)
 {
     /* Declare a table of fixed encodings used to convert each ascii letter
     *  value 26 is reserved for space, and value 27 is reserved for newline
@@ -265,6 +295,16 @@ void decompressFile (FILE *input, FILE *output)
     "001010110"
     };
     
+    if(verbose == 1)
+    {
+        printf("Current Encodings are: \n");
+        int i;
+        for(i = 0; i < 26; i++)
+        {
+            printf("%c = %s ", i + 65, letterEncodings[i]);
+        }
+    }
+
     /* Declare a buffer to store popped bits*/
     char* buffer = NULL;
     /* Keep track of its size to dynamically allocate memory */
@@ -290,8 +330,12 @@ void decompressFile (FILE *input, FILE *output)
             /* Store the bit as its ASCII 1 or 0 format */
             buffer[bufferSize] = (char)(bit + 48);
             ++bufferSize;
+            
+            /* print buffer to debug */
+            #ifdef DEBUG
+                printf("Buffer: %s\n", buffer);
+            #endif
 
-            printf("Buffer: %s\n", buffer);
             /* For every bit popped, see if it matches an encoding */
             for (j = 0; j < 28; j++) 
             {
@@ -300,12 +344,15 @@ void decompressFile (FILE *input, FILE *output)
                 {
                     if(j == 26) /* Position 26 is reserved for space */
                     {
-                        printf("space\n");
+                        if(verbose == 1)
+                            printf("space found\n");
+                        
                         fputc(32, output);
                     }
                     else if (j == 27) /* 27 is reserved for newline */
                     {
-                        printf("newline\n");
+                        if(verbose == 1)
+                            printf("newline found\n");
                         fputc(10, output);
                     }
                     else /* default is lowercase (will convert upper to lower)*/

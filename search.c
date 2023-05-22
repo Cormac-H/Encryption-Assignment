@@ -2,6 +2,8 @@
 #include "menu.h"
 #include "sort.h"
 
+/* #define DEBUG */
+
 /*******************************************************************************
  * This function initiates file sorting on a file provided by a user
  *
@@ -11,6 +13,7 @@
  * - none
  * author: Praket Kumar
 *******************************************************************************/
+
 void searchMain()
 {
     int userSelection;
@@ -75,6 +78,9 @@ void linearSearch(const char *fileName, const char* contents)
 
     while (fscanf(file, "%s", buffer) == 1)
     { 
+        #ifdef DEBUG
+            printf("Searching ->%s\n", buffer);
+        #endif
         if(strstr(buffer, contents) != 0)
             count++;
     }

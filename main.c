@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
                 defaultSortMode = 1;
                 break;
         default:
-            printf("Usage: [-s 1234 -d -w]\n");
+            printf("Usage: [-s 1234 -d -v] [-s = seed for encryption -d"
+                    "= default sort mode -v = verbose compression mode]\n");
             exit(EXIT_FAILURE);
         }   
     }
@@ -71,9 +72,9 @@ int main(int argc, char *argv[])
     printf("\n===============Arguments===============\n");
     printf("1. Seed = %d \n", seed);
     if(verboseMode == 0)
-        printf("2. Verbose Mode = False\n");
+        printf("2. Verbose Compression Mode = False\n");
     else
-        printf("2. Verbose Mode = True\n");
+        printf("2. Verbose Compression Mode = True\n");
 
     if(defaultSortMode == 0)
         printf("2. Default Sort Mode = False\n");
@@ -99,10 +100,10 @@ int main(int argc, char *argv[])
                 decryptionMain(seed);
                 break;
             case 3:
-                compressionMain();
+                compressionMain(verboseMode);
 				break;
             case 4:
-                decompressionMain();
+                decompressionMain(verboseMode);
                 break;
             case 5:
                 sortMain(defaultSortMode);
