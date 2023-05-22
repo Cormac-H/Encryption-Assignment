@@ -9,9 +9,9 @@
 #define MAX_STRING_SIZE 100
 
 
-void linearSearch(const char* fileName);
-void binarySearch(const char* fileName);
-void searchTypeMenu(void);
+void searchMain(void);
+
+void linearSearch(const char* fileName, const char* contents);
 
 #endif
 

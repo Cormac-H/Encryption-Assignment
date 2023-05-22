@@ -1,8 +1,9 @@
 #include "search.h"
 #include "menu.h"
 #include "sort.h"
+
 /*******************************************************************************
- * This function performs a linear search for content found in a file
+ * This function initiates file sorting on a file provided by a user
  *
  * inputs:
  * - none
@@ -10,121 +11,79 @@
  * - none
  * author: Praket Kumar
 *******************************************************************************/
- void linearSearch(const char *fileName){
-    int i;
-    char input[MAX_FILENAME_SIZE];
-
-    while(1){
-    for (i = 0; i<MAX_STRING_SIZE;i++){
-        if(strcmp(fileName, &fileName[i]) == 0){
-            printf("File found: %s\n", fileName);
-            return;
-            }
-        }
-        printf("Not found, try again\n");
-        printf("Enter file name> ");
-        fgets(input, sizeof(input), stdin);
-        input[strcspn(input, "\n")] = '\0';
-        strncpy((char *) fileName, input, MAX_FILENAME_SIZE);
-        
-        /*
-        fgets(fileName, MAX_FILENAME_SIZE, stdin);
-        fileName[strcspn(fileName, "\n")] = '\0';
-        */
-
-        }
-    
-}
- 
-/*******************************************************************************
- * This function performs a binary search for content found in a file
- *
- * inputs:
- * - none
- * outputs:
- * - none
- * author: 
-*******************************************************************************/
-void binarySearch(const char *fileName){
-    int low = 0, high = MAX_STRING_SIZE - 1, mid;
-    char input[MAX_FILENAME_SIZE];
-
-    while(1) {
-    while(low <= high) {
-        mid = (low + high)/2;
-        int res = strcmp(fileName, &fileName[mid]);
-
-        if (res == 0) {
-            printf("File found; %s\n", fileName);
-            return;
-        }
-
-        if(res > 0){
-            low = mid + 1;
-
-        } else {
-            high = mid - 1;
-        }
-    }
-    printf("File not found, try again\n");
-    printf("Enter file name> ");
-
-    fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = '\0';
-    strncpy((char *) fileName, input, MAX_FILENAME_SIZE);
-
-    /*
-    fgets((char *) fileName, MAX_FILENAME_SIZE, stdin);
-    fileName[strcspn(fileName, "\n")] = '\0';
-    */
-
-    }
-
-
-    /*
-    fgets(input, sizeof(input), stdin);
-        input[strcspn(input, "\n")] = '\0';
-        strncpy((char *) fileName, input, MAX_FILENAME_SIZE);
-        
-        fgets(fileName, MAX_FILENAME_SIZE, stdin);
-        fileName[strcspn(fileName, "\n")] = '\0';
-        */
-}
-
-void searchTypeMenu(){
-    int userChoice;
+void searchMain()
+{
+    int userSelection;
     char fileName[MAX_FILENAME_SIZE];
+    char contents[MAX_FILENAME_SIZE];
+    /* Prompt user to begin searching */
+    printSearchMenu();
 
-    while(1) {
-        printSearchMenu();
-        printf("Enter the type of file searching>");
-        scanf("%d", &userChoice);
-        clearInputBuffer();
+    printf("Enter your choice for searching>");
+    scanf("%d", &userSelection);
+    clearInputBuffer();
 
-        if(userChoice == 3){
-            printf("Going back to the main menu.\n");
-            return;
-        }
-        while(userChoice != 1 && userChoice != 2){
-            printf("Invalid input, try again\n");
-            printf("Enter the type of file searching>");
-            scanf("%d", &userChoice);
-            clearInputBuffer();
-        }
-        printf("Enter file name> ");
-        fgets(fileName, MAX_FILENAME_SIZE, stdin);
-        fileName[strcspn(fileName, "\n")] = '\0';
-        switch (userChoice){
+    while(1) /* Loop requires user provided val of 2 to exit */
+    {
+        switch(userSelection)
+        {
             case 1:
-                linearSearch(fileName);
+                printf("Enter file name: ");
+                scanf("%s", fileName);
+                clearInputBuffer();
+                
+                printf("Enter phrase to search for (max 260 characters)>");
+                scanf("%s", contents);
+                clearInputBuffer();
+
+                linearSearch(fileName, contents);            
                 break;
             case 2:
-                binarySearch(fileName);
+                return;
+            default:
+                printf("Invalid choice.\n");
                 break;
         }
+        /* Loop over prompting user input */
+        printSearchMenu();
+        printf("Enter your choice for searching>");
+        scanf("%d", &userSelection);
+        clearInputBuffer();
     }
 }
-            
+
+/*******************************************************************************
+ * This function searches a file for a phrase and declares the number of
+ * instances found.
+ *
+ * inputs:
+ * - name of input file to be searched
+ * outputs:
+ * - phrase to search for
+ * author: Cormac Hegarty
+*******************************************************************************/
+void linearSearch(const char *fileName, const char* contents)
+{
+    char buffer[2000];
+
+    FILE* file = fopen(fileName, "r");
+    if (file == NULL) {
+        printf("Error: %s not found\n", fileName);
+        return;
+    }
+    int count = 0;
+
+    while (fscanf(file, "%s", buffer) == 1)
+    { 
+        if(strstr(buffer, contents) != 0)
+            count++;
+    }
+    printf("%s found in %s %d times\n", fileName, contents, count);
+
+    fclose(file);
+}
+ 
+        
             
 
 

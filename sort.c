@@ -9,7 +9,7 @@
  * - this will flag that insertion sort is automatically used
  * outputs:
  * - none
- * author: Thomas Boardman
+ * author: Cormac Hegarty
 *******************************************************************************/
 void sortMain(int defaultSortMode) 
 {
@@ -31,7 +31,7 @@ void sortMain(int defaultSortMode)
                 printf("Enter file name: ");
                 scanf("%s", fileName);
                 clearInputBuffer();
-                
+
                 FILE* file = fopen(fileName, "r");
                 if (file == NULL) {
                     printf("Error when opening the file\n");

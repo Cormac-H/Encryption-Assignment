@@ -18,7 +18,7 @@ void printMainMenu(void) {
         "3. File Compression\n"
         "4. File Decompression\n"
         "5. File Sorting\n"
-        "6. Search Files\n"
+        "6. File Searching\n"
         "7. Exit\n"
     );
 }
@@ -87,15 +87,14 @@ void printSortMenu(void)
  * - none
  * outputs:
  * - none
- * author: Praket Kumar
+ * author: Cormac
 *******************************************************************************/
 void printSearchMenu(void)
 {
     printf("\n==========File Searching==========\n");
     printf(
-        "1. Linear Search\n"
-        "2. Binary Search\n"
-        "3. Go Back\n"
+        "1. Enter File Name to search\n"
+        "2. Go Back\n"
     );
 }
 

@@ -15,8 +15,8 @@
 #include "encrypt.h"
 #include "compress.h"
 #include "sort.h"
-#include "menu.h"
 #include "search.h"
+#include "menu.h"
 /*******************************************************************************
  * Main
 *******************************************************************************/
@@ -83,13 +83,13 @@ int main(int argc, char *argv[])
     
     /* Prompt user to select a function */
     int userSelection; 
-    while(1) /* Loop requires user provided val of 7 to exit */
-    {
-        printMainMenu();
-        printf("Enter your choice>");
-        scanf("%d", &userSelection);
-        clearInputBuffer();
+    printMainMenu();
+    printf("Enter your choice>");
+    scanf("%d", &userSelection);
+    clearInputBuffer();
 
+    while(1) /* Loop requires user provided val of 6 to exit */
+    {
         switch(userSelection)
         {
             case 1:
@@ -108,14 +108,22 @@ int main(int argc, char *argv[])
                 sortMain(defaultSortMode);
                 break;
             case 6: 
-                searchTypeMenu();
+                searchMain();
                 break;
             case 7: /* Exit program given correct user value */
                 return 0;
             default:
                 printf("Invalid choice.");
-        } 
+        }
+        /* Loop over prompting user input */
+        printMainMenu();
+        printf("Enter your choice>");
+        scanf("%d", &userSelection);
+        clearInputBuffer();
     }
+
+    return 0;
+
 }
 
 

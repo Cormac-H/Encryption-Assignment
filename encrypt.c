@@ -68,7 +68,7 @@ void encryptionMain(int seed)
             case 4:
                 return;
             default:
-                printf("Invalid choice.");
+                printf("Invalid choice.\n");
                 break;
         }
         /* Loop over prompting user input */
@@ -147,7 +147,7 @@ void decryptionMain(int seed)
             case 4:
                 return;
             default:
-                printf("Invalid choice.");
+                printf("Invalid choice.\n");
                 break;
         }
         /* Loop over prompting user input */
