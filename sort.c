@@ -1,7 +1,7 @@
 #include "sort.h"
 #include "menu.h"
 
-#define DEBUG
+/* #define DEBUG */
 /*******************************************************************************
  * This function initiates file sorting on a file provided by a user
  *
@@ -28,7 +28,7 @@ void sortMain(int defaultSortMode)
     {
         switch(userSelection)
         {
-            case 1:
+            case 1: /* Case 1, a single file is sorted */
                 printf("Enter file name: ");
                 scanf("%s", fileName);
                 clearInputBuffer();
@@ -56,12 +56,12 @@ void sortMain(int defaultSortMode)
                 /* Close the file before reopening the file for the writing */
                 fclose(file); 
 
-                if(defaultSortMode == 1)
+                if(defaultSortMode == 1) /* sort by insertion by default */
                 {
                     insertionSort(contents, numLines);
                     printf("Insertion Sort has been used by default\n");
                 }
-                else
+                else /* otherwise provide a menu of sort options */
                 {
                     int sortChoice = 0;
                     printf(
@@ -74,32 +74,32 @@ void sortMain(int defaultSortMode)
                     scanf("%d", &sortChoice);
                     clearInputBuffer();
 
-                    switch(sortChoice) /* Choose a sort based on a user prompt */
+                    switch(sortChoice) /* Choose a sort based on user prompt */
                     {
                         case 1:
                             insertionSort(contents, numLines);
-                            printf("File contents have been sorted alphabetically"
-                                    " with Insertion Sort\n");
+                            printf("File contents have been sorted "
+                                    "alphabetically with Insertion Sort\n");
                             break;
                         case 2:
                             bubbleSort(contents, numLines);
-                            printf("File contents have been sorted alphabetically"
-                                    " with Bubble Sort\n");
+                            printf("File contents have been sorted "
+                                    "alphabetically with Bubble Sort\n");
                             break;
                         case 3:
                             quickSort(contents, 0, numLines - 1);
-                            printf("File contents have been sorted alphabetically"
-                                    " with Insertion Sort\n");
+                            printf("File contents have been sorted "
+                                    "alphabetically with Insertion Sort\n");
                             break;
                         default:
                             insertionSort(contents, numLines);
                             printf("Option not recognized: "
-                                "Insertion Sort has been selected by default\n");
+                            "Insertion Sort has been selected by default\n");
 
                     }
                 }
                 
-                /* writes the stored contents from file back into the file */
+                /* writes sorted contents from file back into the file */
                 file = fopen(fileName, "w");
                 for (i = 0; i < numLines; i++)
                     fprintf(file, "%s", contents[i]);
@@ -107,7 +107,7 @@ void sortMain(int defaultSortMode)
                 fclose(file);
                 
                 break;
-            case 2:
+            case 2: /* second main case - batch sorting */
                 char fileName[MAX_FILENAME_SIZE];
 
                 /* Get the first file name */
@@ -123,6 +123,7 @@ void sortMain(int defaultSortMode)
                 /* Track the beginning of the list for iterating */
                 node_t* firstFile = currentFile;
                 
+                /* Prompt user to continue submitting files */
                 int userChoice;
                 printf("1. Enter another file name\n"
                         "2. Sort listed files\n"
@@ -142,10 +143,11 @@ void sortMain(int defaultSortMode)
                             scanf("%s", fileName);
                             clearInputBuffer();
 
+                            /* initialize the new node */
                             node_t* newFile = malloc(sizeof(node_t));
                             strcpy(newFile->fileName, fileName);
                             newFile->nextFile = NULL;
-
+                            /* make the new node the current node observed */
                             currentFile->nextFile = newFile;
                             currentFile = newFile;
                             break;
@@ -153,10 +155,12 @@ void sortMain(int defaultSortMode)
                             /* Perform an insertion sort on every file*/
                             while(firstFile != NULL)
                             {
+                                /* Check file integrity */
                                 FILE* file = fopen(firstFile->fileName, "r");
                                 if (file == NULL)
                                 {
-                                    printf("Error opening %s\n", firstFile->fileName);
+                                    printf("Error opening %s\n", 
+                                        firstFile->fileName);
                                     firstFile = firstFile->nextFile;
                                 }
                                 else
@@ -168,15 +172,16 @@ void sortMain(int defaultSortMode)
                                 /* Read file contents in array of strings */
                                 char buffer[MAX_STRING_SIZE];
 
+                                /* get file contents */
                                 while (fgets(buffer, MAX_STRING_SIZE, file)) 
                                 {
                                     strcpy(contents[i], buffer);
                                     i++;
                                 }
                                 int numLines = i;
-
+                                /* perform insertion sort on contents */
                                 insertionSort(contents, numLines);
-
+                                /* write sorted contents to file */
                                 file = fopen(firstFile->fileName, "w");
 
                                 for (i = 0; i < numLines; i++)
@@ -184,6 +189,7 @@ void sortMain(int defaultSortMode)
 
                                 fclose(file);
 
+                                /* Update pointer to next node */
                                 firstFile = firstFile->nextFile;
                                 }
                             }
@@ -202,6 +208,7 @@ void sortMain(int defaultSortMode)
                 }
                 break;
             case 3:
+            /* Exit menu */
                 return;
             default:
                 printf("Invalid choice.\n");
@@ -250,6 +257,9 @@ void insertionSort(char fileContents[][MAX_STRING_SIZE],
         /* inserts the key element at the correct postion after the while loop 
          * is finished */
         strcpy(fileContents[b + 1], key);
+        #ifdef DEBUG
+            printf("%s     ->moved to position %d\n", fileContents[a], b+1);
+        #endif
     }
 
 }
@@ -280,6 +290,10 @@ void bubbleSort(char fileContents[][MAX_STRING_SIZE], const int fileLineCount)
                 strcpy(temp, fileContents[b]);
                 strcpy(fileContents[b], fileContents[b + 1]);
                 strcpy(fileContents[b + 1], temp);
+
+                #ifdef DEBUG
+                    printf("compared %s and %s\n", temp, fileContents[b]);
+                #endif
             }
         }
     }
@@ -360,5 +374,8 @@ void swap(char fileContents[][MAX_STRING_SIZE], const int a, const int b)
     strcpy(temp, fileContents[a]);
     strcpy(fileContents[a], fileContents[b]);
     strcpy(fileContents[b], temp);
+    #ifdef DEBUG
+        printf("compared %s and %s\n", temp, fileContents[b]);
+    #endif
 }
 
